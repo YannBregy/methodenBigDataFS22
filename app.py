@@ -175,7 +175,11 @@ if landlord:
 
     ### Section for listing price prediction ###
     st.header("Predicting your listing's price")
+
+    # Allow user to enter file to check listing price
     uploaded_data = st.file_uploader("Choose a file with your listing data to predict price")
+
+    # For testing purposes, display 4 different listings for download
     st.markdown("If you want to test, we have prepared a couple example listings to test out. Simply click to download!")
     row6_col1, row6_col2, row6_col3, row6_col4 = st.columns([1,1,1,1])
     example1 = pd.read_csv("test_example1.csv").to_csv()
@@ -212,24 +216,28 @@ if landlord:
                                                   "neighbourhood_group_cleansed", "room_type",
                                                   "picture_url"],axis=1)
         new_listing["predicted_price"] = model.predict(new_listing_for_model)
+        # Take first listing of dataset
         first_listing = new_listing.head(1)
-
+        # Display prediction of price to user
         predicted_price = first_listing.loc[0, "predicted_price"]
         st.success("You listing is worth ${0}!".format(predicted_price))
 
+        # Check state of superhost, verified, profile_pic and accommodates for given listing
         is_superhost = first_listing.loc[0, "host_is_superhost"]
         is_verified = first_listing.loc[0, "host_identity_verified"]
         has_profile_pic = first_listing.loc[0, "host_has_profile_pic"]
         number_accommodates = first_listing.loc[0, "accommodates"]
 
+        #Split row in 4 columns to display recommendations
         row5_col1, row5_col2, row5_col3, row5_col4 = st.columns([1,1,1,1])
-
+        # Display images to make it more visually appealing
         row5_col1.image("https://ih1.redbubble.net/image.2704361841.4497/st,small,845x845-pad,1000x1000,f8f8f8.jpg")
         row5_col2.image("https://miro.medium.com/max/800/1*fFUnF8o4URvCowXSacCgGA.jpeg")
         row5_col3.image("https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg")
         row5_col4.image("https://st3.depositphotos.com/1432405/13041/v/950/depositphotos_130410922-stock-illustration"\
                         "-bed-icon-cartoon-style.jpg")
 
+        #If listing is not superhost, check what price improvement could be done
         if is_superhost == 0:
             superhost_first_listing = first_listing
             superhost_first_listing["host_is_superhost"] = 1
@@ -246,6 +254,7 @@ if landlord:
         else:
             row5_col1.markdown("Good job, you are already a superhost!")
 
+        # If listing is not verified, check what price improvement could be done
         if is_verified == 0:
             verified_first_listing = first_listing
             verified_first_listing["host_identity_verified"] = 1
@@ -262,6 +271,7 @@ if landlord:
         else:
             row5_col2.markdown("Good job, you have already verified your acount!")
 
+        # If host has no profile pic, check what price improvement could be done
         if has_profile_pic == 0:
             pic_first_listing = first_listing
             pic_first_listing["host_identity_verified"] = 1
@@ -279,6 +289,7 @@ if landlord:
         else:
             row5_col3.markdown("Good job, you have already added a profile picture to your account!")
 
+        # Check price improvement for accommodates of one more person (spare bed)
         accommodates_first_listing = first_listing
         accommodates_first_listing["accommodates"] = number_accommodates + 1
         accommodates_first_listing["predicted_price"] = model.predict(accommodates_first_listing.drop(
@@ -294,24 +305,27 @@ if landlord:
             row5_col4.markdown("It seems that in your case, adding a bed would not improve your price.")
 
 
-
 # The renters analysis allows renters to check if a searched for listing is valued accurately
 if renter:
     ### Section for checking some exact listing to see if it is overvalued ###
     st.header("Check if the listing you are considering is valued correctly")
+    # Allow user to enter a AirBNB listing's link
     input_link = st.text_input("Enter the URL of the listing you want to check",
                                value="Enter URL here, for example https://www.airbnb.com/rooms/9357")
     st.markdown("A couple examples if you need inspiration: 11420840 / 22747209 / 7756711 / 24449621")
     if input_link != "Enter URL here":
         try:
+            # Try to check if url is in database
             listing_to_check = data.loc[data["listing_url"] == input_link]
             check_predicted_price = listing_to_check.iloc[0]['predicted_price']
             check_price = listing_to_check.iloc[0]['price']
             check_host = listing_to_check.iloc[0]['host_name']
             check_picture = listing_to_check.iloc[0]['picture_url']
         except IndexError:
+            # If not, display not found message
             st.markdown("Your listing could not be found in our database, try changing the URL.")
         else:
+            # If url in database, show information on host, price and predicted price
             row5_col1, row5_col2 = st.columns([1, 1])
             with row5_col1.container():
                 st.image(check_picture, width=600)
