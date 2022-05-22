@@ -176,6 +176,32 @@ if landlord:
     ### Section for listing price prediction ###
     st.header("Predicting your listing's price")
     uploaded_data = st.file_uploader("Choose a file with your listing data to predict price")
+    st.markdown("If you want to test, we have prepared a couple example listings to test out. Simply click to download!")
+    row6_col1, row6_col2, row6_col3, row6_col4 = st.columns([1,1,1,1])
+    example1 = pd.read_csv("test_example1.csv").to_csv()
+    row6_col1.download_button(
+        label="Download example 1",
+        data=example1,
+        file_name='example1.csv',
+        mime='text/csv')
+    example2 = pd.read_csv("test_example2.csv").to_csv()
+    row6_col2.download_button(
+        label="Download example 2",
+        data=example2,
+        file_name='example2.csv',
+        mime='text/csv')
+    example3 = pd.read_csv("test_example3.csv").to_csv()
+    row6_col3.download_button(
+        label="Download example 3",
+        data=example3,
+        file_name='example3.csv',
+        mime='text/csv')
+    example4 = pd.read_csv("test_example4.csv").to_csv()
+    row6_col4.download_button(
+        label="Download example 4",
+        data=example4,
+        file_name='example4.csv',
+        mime='text/csv')
 
     # Add action to be done if file is uploaded
     if uploaded_data is not None:
@@ -273,9 +299,9 @@ if landlord:
 if renter:
     ### Section for checking some exact listing to see if it is overvalued ###
     st.header("Check if the listing you are considering is valued correctly")
-    # TODO insert a couple examples that could be interesting
     input_link = st.text_input("Enter the URL of the listing you want to check",
-                               value="Enter URL here, for example https://www.airbnb.com/rooms/9357", help="Try this")
+                               value="Enter URL here, for example https://www.airbnb.com/rooms/9357")
+    st.markdown("A couple examples if you need inspiration: 11420840 / 22747209 / 7756711 / 24449621")
     if input_link != "Enter URL here":
         try:
             listing_to_check = data.loc[data["listing_url"] == input_link]
