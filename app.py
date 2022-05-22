@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import joblib
+import pickle
 
 # Defining some general properties of the app
 st.set_page_config(
@@ -47,7 +48,7 @@ row1_col1, row1_col2, row1_col3 = st.columns([1,1,1])
 price = row1_col1.slider("Price of the listing",
                   data["price"].min(),
                   data["price"].max(),
-                  (data["price"].min(), data["price"].max()), step=5.0)
+                  (data["price"].min(), data["price"].max()))
 
 # Selectbox to choose the apartment type. By default, all apartment types are shown
 types = ["All"]
